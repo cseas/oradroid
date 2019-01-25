@@ -16,7 +16,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.Properties;
 
-public class Conn {
+public class ConnJava {
     public static void main(String[] args) throws SQLException, FileNotFoundException, IOException {
         DataHandler dh = new DataHandler();
         ResultSet rset = dh.getAllEmployees();
@@ -33,6 +33,7 @@ public class Conn {
         }
     }
 }
+
 class DataHandler {
     public DataHandler() {}
 
@@ -50,7 +51,6 @@ class DataHandler {
         String userid = prop.getProperty("username");
         String password = prop.getProperty("password");
         String jdbcUrl = "jdbc:oracle:thin:" + userid + "/" + password + "@192.168.43.47:1521:XE";
-        System.out.println(jdbcUrl);
 
         ds.setURL(jdbcUrl);
         conn=ds.getConnection(userid,password);
