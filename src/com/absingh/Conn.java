@@ -5,15 +5,19 @@
 
 package com.absingh;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import oracle.jdbc.pool.OracleDataSource;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.util.Properties;
 
 public class Conn {
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, FileNotFoundException, IOException {
         DataHandler dh = new DataHandler();
         ResultSet rset = dh.getAllEmployees();
 
@@ -32,14 +36,22 @@ public class Conn {
 class DataHandler {
     public DataHandler() {}
 
-    String jdbcUrl = "jdbc:oracle:thin:<username>/<password>@192.168.43.47:1521:XE";
-    String userid = "<username>";
-    String password = "<password>";
     Connection conn;
 
-    public void getDBConnection() throws SQLException {
+    public void getDBConnection() throws SQLException, FileNotFoundException, IOException {
         OracleDataSource ds;
         ds = new OracleDataSource();
+
+        Properties prop = new Properties();
+        String propFileName = "config.properties";
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
+        if (inputStream != null) { prop.load(inputStream); }
+        else { throw new FileNotFoundException("Property file '" + propFileName + "' not found in the classpath"); }
+        String userid = prop.getProperty("username");
+        String password = prop.getProperty("password");
+        String jdbcUrl = "jdbc:oracle:thin:" + userid + "/" + password + "@192.168.43.47:1521:XE";
+        System.out.println(jdbcUrl);
+
         ds.setURL(jdbcUrl);
         conn=ds.getConnection(userid,password);
     }
@@ -49,7 +61,7 @@ class DataHandler {
     String query;
     String sqlString;
 
-    public ResultSet getAllEmployees() throws SQLException {
+    public ResultSet getAllEmployees() throws SQLException, FileNotFoundException, IOException {
             getDBConnection();
             stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_READ_ONLY);
