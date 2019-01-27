@@ -36,8 +36,8 @@ public class ConnectOra {
         }
     }
 
-    public ResultSet getResult() throws SQLException {
-        ResultSet rset = stmt.executeQuery("select * from student");
+    public ResultSet getResult(String query) throws SQLException {
+        ResultSet rset = stmt.executeQuery(query);
         return rset;
     }
 
